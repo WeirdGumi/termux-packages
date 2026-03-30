@@ -1,0 +1,34 @@
+diff --git a/build.zig b/build.zig
+index 8bdd5ce..301c377 100644
+--- a/build.zig
++++ b/build.zig
+@@ -55,6 +55,12 @@ pub fn build(b: *Build) !void {
+         "Set to true to enable xwayland support",
+     ) orelse false;
+ 
++    const libinput = b.option(
++        bool,
++        "libinput",
++        "Set to true to enable libinput support",
++    ) orelse false;
++
+     const full_version = blk: {
+         if (mem.endsWith(u8, version, "-dev")) {
+             var ret: u8 = undefined;
+@@ -81,6 +87,7 @@ pub fn build(b: *Build) !void {
+ 
+     const options = b.addOptions();
+     options.addOption(bool, "xwayland", xwayland);
++    options.addOption(bool, "libinput", xwayland);
+     options.addOption([]const u8, "version", full_version);
+ 
+     const scanner = Scanner.create(b, .{});
+@@ -161,7 +168,7 @@ pub fn build(b: *Build) !void {
+ 
+         river.linkLibC();
+         river.linkSystemLibrary("libevdev");
+-        river.linkSystemLibrary("libinput");
++        if (libinput) river.linkSystemLibrary("libinput");
+         river.linkSystemLibrary("wayland-server");
+         river.linkSystemLibrary("wlroots-0.18");
+         river.linkSystemLibrary("xkbcommon");
